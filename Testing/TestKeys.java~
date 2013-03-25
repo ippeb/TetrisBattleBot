@@ -10,9 +10,15 @@ public class TestKeys {
 	Robot robot = new Robot();
         Runtime rt = Runtime.getRuntime();
 	
-	for (int i = 0; i < 5; i++) {
-	     robot.delay(1000);
+	for (int i = 0; i < 5) {
+	     robot.delay(400); 
 	     WebsiteInteraction.pressKey(MoveType.LEFT , rt);
 	}
+	for (int i = 0; i < 5) {
+	     robot.delay(400); 
+	     WebsiteInteraction.pressKey(MoveType.RIGHT , rt);
+	}
+
+
     }
 }
