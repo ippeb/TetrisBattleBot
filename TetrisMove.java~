@@ -21,4 +21,5 @@ public class TetrisMove {
     public String toString(){
 	return "rot " + rot + " pos " + pos;
     }
+
 }

@@ -2,7 +2,7 @@
 // the next (randomly chosen) Tetromino in 
 // the input.
 
-package TetrisBattleBot;
+package TetrisBattleBot.Testing;
 
 public class TetrisRandom {
     

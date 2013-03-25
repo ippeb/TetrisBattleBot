@@ -32,9 +32,9 @@ public class TetrisBoard {
     
     private int[][] Board; // board, 0 unfilled, i>0 filled
     private int[]  Height; // height at pos  x
-    public  int tilemarker = 2; // 1 is used for wall boundaries at initialization
-    public  int score = 0; // sum of all max(number of subsequently cleared lines - 1, 0)
-    public  boolean filledlinebef = false; // saves if a line was filled in the previous turn
+    public int tilemarker = 2; // 1 is used for wall boundaries at initialization
+    public int score = 0; // sum of all max(number of subsequently cleared lines - 1, 0)
+    public boolean filledlinebef = false; // saves if a line was filled in the previous turn
 
     public TetrisBoard() {
 	Board = new int [BOARDH + TMARGIN + BMARGIN] [BOARDW + LMARGIN + RMARGIN];
@@ -52,13 +52,13 @@ public class TetrisBoard {
     }
 
     // get height at position "pos"
-    public int getHeight(int pos) {
+    int getHeight(int pos) {
 	return Height[pos];
     }
 
     // count for all rows (from left to right) in TetrisBoard.Board
     // number of changes from value 0 (empty) to a positive value (filled)
-    public int horizontalDiff() {
+    int horizontalDiff() {
 	int sol = 0;
 	for (int i = TMARGIN; i < TMARGIN + BOARDH; i++) {
 	    boolean bef = true;
@@ -78,7 +78,7 @@ public class TetrisBoard {
 
     // count for all columns (from top to bottom) in TetrisBoard.Board
     // number of changes from value 0 (empty) to a positive value (filled)
-    public int verticalDiff() {
+    int verticalDiff() {
 	int sol = 0;
 	for (int i = LMARGIN; i < LMARGIN + BOARDW; i++) {
 	    boolean bef = false;
@@ -109,7 +109,7 @@ public class TetrisBoard {
     
 
     // update the entire array Height
-    public void updateHeight() {
+    void updateHeight() {
 	for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) { 
 	    for (int j = 0; j < TMARGIN + BOARDH + 1; j++) {
 		if (Board[j][i] != 0) {
@@ -122,7 +122,7 @@ public class TetrisBoard {
 
     // set all elements of value marking to zero
     // returns true if marking was found
-    public boolean deleteTile(int marking) {
+    boolean deleteTile(int marking) {
 	boolean found = false;
 	for (int j = 0; j < BOARDH + TMARGIN; j++) 
 	    for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
@@ -136,7 +136,7 @@ public class TetrisBoard {
 
 
     // count filled horizontal lines
-    public int countLines() {
+    int countLines() {
 	int linecount=0;
 	for (int i = 0; i < TMARGIN + BOARDH; i++) {
 	    boolean zero = false;
@@ -152,7 +152,7 @@ public class TetrisBoard {
     }
 
     // update score and filledlinebef
-    public void updateScore(int lcount) {
+    void updateScore(int lcount) {
 	if (lcount == 0) {
 	    filledlinebef = false;
 	    return ;
@@ -165,7 +165,7 @@ public class TetrisBoard {
     // clear lines and update array Height
     // this function is (typically) used in the main method
     // just after a Tetromino was dropped ultimately
-    public void clearLinesUpdateHeight() {
+    void clearLinesUpdateHeight() {
 	boolean[] H = new boolean[TMARGIN + BOARDH + BMARGIN];
 	for (int i = 0; i < TMARGIN + BOARDH; i++) {
 	    boolean zero = false;
@@ -204,7 +204,7 @@ public class TetrisBoard {
     // return the number of "holes"
     // a hole is defined as a zero element in TetrisBoard that contains 
     // a nonzero element above it
-    public int hole() {
+    int hole() {
 	int hole = 0;
 	for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) {
 	    boolean found = false;
@@ -219,7 +219,7 @@ public class TetrisBoard {
     // return the highest filled spot of Board
     // Beware: this is a misnomer, the largest height has the smallest value
     // since we consider e.g. h=1 higher than h=34
-    public int maxHeight() { 
+    int maxHeight() { 
 	int tmp = Integer.MAX_VALUE;
 	for (int i = LMARGIN; i < LMARGIN + BOARDW; i++){
 	    if (Height[i] < tmp) tmp = Height[i];
@@ -228,7 +228,7 @@ public class TetrisBoard {
     }
 
     // return the lowest filled spot of Board
-    public int minHeight() { 
+    int minHeight() { 
 	int tmp = 0;
 	for (int i = LMARGIN; i < LMARGIN + BOARDW; i++){
 	    if (Height[i] > tmp) tmp = Height[i];
@@ -238,7 +238,7 @@ public class TetrisBoard {
     
     // print the current Tetris board
     // mark wall boundaries as '#'
-    public void printFullBoard(){
+    void printFullBoard(){
 	for (int j = TMARGIN; j < TMARGIN + BOARDH + 1; j++){
 	    for (int i = LMARGIN - 1; i < LMARGIN + BOARDW + 1; i++){
 		System.out.print(Board[j][i]==1?"#":(Board[j][i]==0?" ":Board[j][i]%10));
@@ -257,7 +257,7 @@ public class TetrisBoard {
     
     // returns true if a Tetromino type i, rotated by j*90 degrees at position x=k, y=h
     // collides with a field on the TetrisBoard
-    public boolean collide(int i, int j, int k, int h){
+    boolean collide(int i, int j, int k, int h){
 	for (int l = 0; l < 4; l++)
 	    for (int m = 0; m < 4; m++)
 		if (Board[h+l][k+m]!=0 && TETROMINO[i*4+j][l][m]!=0) 
@@ -268,7 +268,7 @@ public class TetrisBoard {
     // insert Tetromino type j, rotated by j*90 degrees at position x=k, y=h in 2D TetrisBoard
     // returns false if there is an overlap or if Tetromino exceeds the boundaries
     // of the Tetris board
-    public boolean insertTetromino(int i, int j, int k, int h, int marker){
+    boolean insertTetromino(int i, int j, int k, int h, int marker){
 	if (collide(i, j, k, h)) return false;
 	for (int l = 0; l < 4; l++)
 	    for (int m = 0; m < 4; m++)
@@ -280,7 +280,7 @@ public class TetrisBoard {
     // drops a Tetromino type i, rotated by j*90 degrees at position x=k with marking "marker"
     // returns y coordinate of Tetromino
     // returns -1 if Tetromino couldn't be dropped (e.g. overlapped boundary)
-    public int dropTetromino(int i, int j, int k, int marker) {
+    int dropTetromino(int i, int j, int k, int marker) {
 	int h=Math.min(Math.min(Height[k], Height[k+1]), Math.min(Height[k+2], Height[k+3]))-4;
 
 	// there must be a collision 

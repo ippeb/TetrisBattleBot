@@ -1,7 +1,7 @@
 // Prints the position of your mouse cursor 
 // and the current rgb values of that position.
 
-package TetrisBattleBot.Testing;
+package TetrisBattleBot;
 
 import java.awt.*;
 

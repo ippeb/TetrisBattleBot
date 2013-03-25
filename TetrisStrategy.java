@@ -1,13 +1,4 @@
-//  ---------------------------------------------------------------------------
-// |  a Facebook TetrisBattleBot                                               |
-// |  by Josef Ziegler                                                         |
-// |  the aim of the game is to maximize the number of subsequent filled lines |
-// |                                                                           |
-// |  for more info on the actual game, see                                    |
-// |  see: http://www.tetrisfriends.com/                                       |
-// |       http://apps.facebook.com/tetris_battle/                             |
-//  ---------------------------------------------------------------------------
-//
+// the aim of the game is to maximize the number of subsequent filled lines
 // some thoughts on the implemented strategy:
 //
 // These factors influence the costFunction:
@@ -22,22 +13,20 @@
 //   7 pieces depending on the two sides of the trough. Concentrate on issues that 
 //   are near the current top of the pile. Holes that 10 levels below the top edge 
 //   are not as important as holes that are immediately below the top edge.
-//
 
 package TetrisBattleBot;
 
 public class TetrisStrategy {
     // returns the cost of placing the Tetromino type i, rotated by j*90 degrees at position x=k 
-    int costFunction(TetrisBoard TB, int i, int j, int k, boolean DEBUG) {
+    public int costFunction(TetrisBoard TB, int i, int j, int k, boolean DEBUG) {
 	if (DEBUG) {
 	    System.out.println("cost fn ("+i+", "+j+", "+k+")");
 	    TetrisBoard.printTetromino(i);
 	}
 
-	int cost;
+	int cost = Integer.MAX_VALUE;
 	int ret = TB.dropTetromino(i,j,k,TB.tilemarker);
-	if (ret < 0) cost = Integer.MAX_VALUE;
-	else {
+	if (ret >= 0) {
 	    int countLines = TB.countLines(); // number of full lines
 	    int hole       = TB.hole();       // number of holes
 	    // maximal height (value from 0 to BOARDH (exclusive), as seen from the bottom)
@@ -49,17 +38,14 @@ public class TetrisStrategy {
 	    // count for all columns (from top to bottom) in TetrisBoard.Board
 	    // number of changes from value 0 (empty) to a positive value (filled)
 	    int verticalDiff = TB.verticalDiff();
-	    int onTopOfHoles;
-	    int tall1WideTroughs;
-	    // Version 1 - cost function
-	    // cost =  (verticalDiff * 100 * 100 + (horizontalDiff+hole) * 100 + maxHeight * 80 + currHeight);
-
+	    // the cost function for a board configuration
 	    cost =  verticalDiff * 100 * 100 + (horizontalDiff+hole) * 100 + maxHeight * 80 + currHeight;
 	    if (!TB.filledlinebef && countLines == 1) cost += 100;
 	    if ((TB.filledlinebef && countLines >= 1) || countLines >= 2) {
 		cost = 0;
 	    }
 	}
+
 	TB.deleteTile(TB.tilemarker);
 
 	if (DEBUG) 
@@ -69,16 +55,16 @@ public class TetrisStrategy {
     
     // compute best move based on minimizing the costFunction(i,j,k)
     // argument type denotes the Tetromino type (value from 0 to 6, inclusive)
-    TetrisMove computeBestMove(TetrisBoard TB, int type) {
+    public TetrisMove computeBestMove(TetrisBoard TB, int type) {
 	int[][][] Cost = new int [TetrisBoard.LMARGIN + TetrisBoard.BOARDW + TetrisBoard.RMARGIN][7][4];
-	// Among all possible placements of the current Tetromino
+	// among all possible placements of the current Tetromino
 	// pick the one which minimizes the cost function.
 	
 	for (int k = 0; k < 4; k++) { // every rotation
 	    for (int i = TetrisBoard.LMARGIN - 4; i < TetrisBoard.LMARGIN + TetrisBoard.BOARDW + 4; i++) { // every position
-		//System.out.println("|rot " + k + " pos " + i);
+		// System.out.println("|rot " + k + " pos " + i);
 		Cost[i][type][k] = costFunction(TB, type, k, i, false);
-		//System.out.println("cost " + Cost[i][type][k]);
+		// System.out.println("cost " + Cost[i][type][k]);
 	    }
 	}
 		
