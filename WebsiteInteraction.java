@@ -8,8 +8,6 @@ package TetrisBattleBot;
 import java.awt.*;
 import java.lang.Math;
 import java.awt.image.BufferedImage;
-import java.awt.event.KeyEvent;
-import java.awt.event.InputEvent;
 
 public class WebsiteInteraction {
 
@@ -105,42 +103,30 @@ public class WebsiteInteraction {
 
     public static void  pressKey(MoveType t, Runtime rt) {
 	try {
-	    /* // AppleScript seems not to be working... because Google Chrome gives each (tab and) plug-in
-	    // its own process to work the click only affects the current tab but isn't 
-	    // caught by the flash plug-in
-	    switch (t) {
-	    case UP: rt.exec("osascript TetrisBattleBot/AppleScript/up.scpt");
-	    break;
-	    case DOWN:  rt.exec("osascript TetrisBattleBot/AppleScript/down.scpt");
-	    break;
-	    case LEFT: rt.exec("osascript TetrisBattleBot/AppleScript/left.scpt");
-	    break;
-	    case RIGHT: rt.exec("osascript TetrisBattleBot/AppleScript/right.scpt");
-	    break;
-	    case SHIFT: rt.exec("osascript TetrisBattleBot/AppleScript/shift.scpt");
-	    break;
-	    case SPACE: rt.exec("osascript TetrisBattleBot/AppleScript/space.scpt");
-	    break;
-	    case CLICK: rt.exec(" ./TetrisBattleBot/MouseTools/MouseTools -leftClick");
-	    break;
-	    }
+	    /*
+	      AppleScript seems not to be working... because Google Chrome gives each (tab and) plug-in
+	      its own process to work the click only affects the current tab but isn't 
+	      caught by the flash plug-in. 
 	    */
-	    switch (t) {
-	    case UP:    rt.exec("./TetrisBattleBot/QuartzEventServices/up");
+	    
+	    System.out.println(t.toString());
+
+	    switch (t) {       
+	    case UP:    rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/up");
 		break;
-	    case DOWN:  rt.exec("./TetrisBattleBot/QuartzEventServices/down");
+	    case DOWN:  rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/down");
 		break;
-	    case LEFT:  rt.exec("./TetrisBattleBot/QuartzEventServices/left");
+	    case LEFT:  rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/left");
 		break;
-	    case RIGHT: rt.exec("./TetrisBattleBot/QuartzEventServices/right");
+	    case RIGHT: rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/right");
 		break;
-	    case SHIFT: rt.exec("./TetrisBattleBot/QuartzEventServices/shift");
+	    case SHIFT: rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/shift");
 		break;
-	    case SPACE: rt.exec("./TetrisBattleBot/QuartzEventServices/space");
+	    case SPACE: rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/space");
 		break;
-	    case CLICK: rt.exec("./TetrisBattleBot/MouseTools/MouseTools -leftClick");
+	    case CTRL:  rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/ctrl");
 		break;
-	    case CTRL:  rt.exec("./TetrisBattleBot/QuartzEventServices/ctrl");
+	    case CLICK: rt.exec("./TetrisBattleBot/Mouse/MouseTools -leftClick");
 		break;
 	    }
 	} catch (Throwable trw)
@@ -167,10 +153,10 @@ public class WebsiteInteraction {
 	robot.delay(400); // or: 100
 	pressKey(t, rt);
     }
-	
+    
     public static void doMove(TetrisMove move, Robot robot, int type) {
 	final int SPACEDELAY = 550;
-	//	robot.setAutoWaitForIdle(true);
+	robot.setAutoWaitForIdle(true);
 	Runtime rt = Runtime.getRuntime();
 	// extra delay after pressing "SPACE"
 	robot.delay(SPACEDELAY); // must be done in the beginning (because of detection of Tetromino)
@@ -178,12 +164,10 @@ public class WebsiteInteraction {
 	if (move.rot <= 2) {
 	    for (int i = 0; i < move.rot; i++) {
 		clickPressKey(MoveType.UP, rt, robot);
-		System.out.println("UP");
 	    }
 	} 
 	else { // move.rot == 3
 	    clickPressKey(MoveType.CTRL, rt, robot);
-	    System.out.println("CTRL");
 	}
 	
 	int pos; // default starting position
@@ -193,20 +177,20 @@ public class WebsiteInteraction {
 	if (move.pos >= pos) {
 	    for (int i = pos; i < move.pos; i++) {
 		clickPressKey(MoveType.RIGHT, rt, robot);
-		System.out.println("RIGHT");
 	    }
 	}
 	else {
 	    for (int i = pos; i > move.pos; i--) {
 		clickPressKey(MoveType.LEFT, rt, robot);
-		System.out.println("LEFT");
 	    }
 	}
 	clickPressKey(MoveType.SPACE, rt, robot);
-	System.out.println("SPACE");
     }
+
+    
     
     public static void main(String[] args) throws AWTException {
+	
 	// mark the boundaries of the rectangle of the very first Tetromino
 	Point ptf1 = new Point(), ptf2 = new Point();
 	// rectangle formed by ptf1, ptf2
@@ -256,5 +240,6 @@ public class WebsiteInteraction {
 	    currBoard.printFullBoard();
 	    System.out.println("SCORE: " + currBoard.score);
 	}
+
     }
 }
