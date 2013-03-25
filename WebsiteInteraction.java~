@@ -150,12 +150,12 @@ public class WebsiteInteraction {
 
 	// robot.delay(200);
 	//pressKey(MoveType.CLICK, rt);
-	robot.delay(400); // or: 100
+	robot.delay(250); // or: 100
 	pressKey(t, rt);
     }
     
     public static void doMove(TetrisMove move, Robot robot, int type) {
-	final int SPACEDELAY = 500;
+	final int SPACEDELAY = 300;
 	robot.setAutoWaitForIdle(true);
 	Runtime rt = Runtime.getRuntime();
 	// extra delay after pressing "SPACE"

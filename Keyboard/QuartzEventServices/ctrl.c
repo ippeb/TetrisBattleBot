@@ -6,12 +6,13 @@
 #include "delay.h"
 
 int main() {
-  CGEventRef mkey = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)59, true);
-  CGEventRef fkey = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)59, false);
-  CGEventPost(kCGHIDEventTap, mkey);
-  nanosleep((struct timespec[]){{0, DELAY}}, NULL);
-  CGEventPost(kCGHIDEventTap, fkey);
-  CFRelease(mkey);
-  CFRelease(fkey);
-  return 0;
+    CGEventRef mkey = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)59, true);
+    CGEventRef fkey = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)59, false);
+    CGEventPost(kCGSessionEventTap, mkey);
+    nanosleep((struct timespec[]){{0, DELAY}}, NULL);
+    CGEventPost(kCGSessionEventTap, fkey);
+    CFRelease(mkey);
+    CFRelease(fkey);
+    nanosleep((struct timespec[]){{0, DELAY}}, NULL);
+    return 0;
 }
