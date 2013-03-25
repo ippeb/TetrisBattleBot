@@ -2,6 +2,7 @@ TetrisBattleBot
 ===============
 
 A Facebook Tetris Battle Bot.
+
 by Josef Ziegler.
 
 for more info on the actual game, see
