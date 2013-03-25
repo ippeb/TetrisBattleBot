@@ -2,6 +2,7 @@
 // Input: Reading the screen 
 // Output: Applying key strokes for rotation, drop and hold button, mouse clicks 
 // for focusing on the browser window (if necessary)
+//
 
 package TetrisBattleBot;
 
