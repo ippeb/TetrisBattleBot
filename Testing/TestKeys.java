@@ -8,7 +8,7 @@ import TetrisBattleBot.WebsiteInteraction.MoveType;
 public class TestKeys {
     public static void program(int delay1, int delay2, Robot robot, Runtime rt) {
 	System.out.println("Program START " + delay1 +"  "+ delay2);
-	robot.delay(200);
+	robot.delay(1000);
 	for (int j = 0; j < 2; j++) {
 	    for (int k = 0; k < 2; k++) {
 		for (int i = 0; i < 3; i++) {

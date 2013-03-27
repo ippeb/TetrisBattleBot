@@ -29,8 +29,10 @@ public class TestKeys {
 	Robot robot = new Robot();
         Runtime rt = Runtime.getRuntime();
 	
-	program(100, 150, robot, rt);
 	program(150, 200, robot, rt);
-
+	program(150, 220, robot, rt);
+	program(150, 230, robot, rt);
+	program(150, 240, robot, rt);
+	program(170, 240, robot, rt);
     }
 }
