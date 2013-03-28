@@ -21,9 +21,9 @@ public class TetrisWebsiteInteraction {
   public static Robot robot;
 
   // key press delay for placing Tetromino
-  public static final int SPACEDELAY = 150;
+  public static final int SPACEDELAY = 250;
   // key press delay for other movements
-  public static final int KEYDELAY   = 50;
+  public static final int OTHDELAY   = 50;
   // number of milliseconds this robot sleeps
   // after generating an event
   public static final int AUTODELAY  = 50;
@@ -41,13 +41,9 @@ public class TetrisWebsiteInteraction {
   // 4: 54 174 255
   // 5: 49 69 237
   // 6: 247 106 0
-  public static final int[][] PMATCH = {{251,184,0},{238,26,72},{117,208,0},
-                                        {191,47,163},{54,174,255},{49,69,237},{247,106,0}};
+  public static final int[][] PMATCH = {{251,184,0},{238,26,72},{117,208,0},{191,47,163},{54,174,255},{49,69,237},{247,106,0}};
 
-  public static Rectangle TetrisRect;
-
-  
-  // countdown for delay (in seconds)
+  // countdown for delay
   public static void countdown(int s) {
     for (int i = s; i >= 1; i--) {
       System.out.println(i + "sec...");
@@ -55,35 +51,30 @@ public class TetrisWebsiteInteraction {
     }
   }
 
-  // define a rectangle given the points pt1 and pt2
-  // (which form two corners of the rectangle)
-  // required: height > 0, width > 0
-  public static Rectangle setRectangle(Point pt1, Point pt2) {
-    Rectangle rect = new Rectangle( Math.min(pt1.x, pt2.x),  Math.min(pt1.y, pt2.y),
-                                    Math.abs(pt1.x - pt2.x), Math.abs(pt1.y - pt2.y));
-
-    System.out.println("set rectangle to " + rect.toString());
-    return rect;
-  }
-  
-  // initializes TetrisRect
-  // s1 specifies the duration (in seconds) until the cursor must be moved
-  // to the first point. s2 specifies the delay (in seconds) between choosing
-  // the first and the second point bounding the rectangle
-  public static void chooseRectangle(int s1, int s2) {
-    System.out.println("Move your cursor to the upper left corner of the Tetris board. ");
-    countdown(s1);
-    
-    Point pt1 = new Point(MouseInfo.getPointerInfo().getLocation());
+  // sets appropriate values for pt1 and pt2
+  public static void chooseRectangle(Point pt1, Point pt2) { 
+    Point tmp;
+    tmp = MouseInfo.getPointerInfo().getLocation();
+    pt1.x = tmp.x; 
+    pt1.y = tmp.y;
     System.out.println(pt1.toString());
 
-    System.out.println("Move your cursor to the lower right corner of the Tetris board.");
-    countdown(s2);	
+    countdown(2);	
 
-    Point pt2 = new Point(MouseInfo.getPointerInfo().getLocation());
+    tmp = MouseInfo.getPointerInfo().getLocation();
+    pt2.x = tmp.x;
+    pt2.y = tmp.y;
     System.out.println(pt2.toString());
-    
-    TetrisRect = setRectangle(pt1, pt2);
+  }
+
+  // define a rectangle given points pt1 and pt2 (which form two corners of the rectangle)
+  // required: height > 0, width > 0
+  public static void setRectangle(Point pt1, Point pt2, Rectangle rect) {
+    rect.x =      Math.min(pt1.x, pt2.x);
+    rect.y =      Math.min(pt1.y, pt2.y);
+    rect.width =  Math.abs(pt1.x - pt2.x);
+    rect.height = Math.abs(pt1.y - pt2.y);
+    System.out.println("set rect to " + rect.toString());
   }
 	
   // match two rgb triples
@@ -101,10 +92,11 @@ public class TetrisWebsiteInteraction {
     
     
   // detect Tetromino using pixels in rect from screen
-  public static int detectTetrominoSimple() {
-    BufferedImage Img = robot.createScreenCapture(TetrisRect);
-    for (int x = 0; x < TetrisRect.width; x++) {
-      for (int y = 0; y <  TetrisRect.height; y++) {
+  public static int detectTetromino(Rectangle rect) {
+    BufferedImage Img = robot.createScreenCapture(rect);
+    //	Img.getRGB(rect.x, rect.y, rect.width, rect.height, rgb, 0, rect.width);
+    for (int x = 0; x < rect.width; x++) {
+      for (int y = 0; y <  rect.height; y++) {
         int rgb = Img.getRGB(x,y);
         int[] A = new int[3];
         A[0] = (rgb >> 16) & 0xFF;
@@ -119,27 +111,6 @@ public class TetrisWebsiteInteraction {
     return -1; // none detected
   }
 
-  // detect current Tetris board configuration
-  public static TetrisBoard detectTetrisBoard() {
-    TetrisBoard detectBoard = new TetrisBoard();
-    BufferedImage Img = robot.createScreenCapture(TetrisRect);
-    int hstep = TetrisRect.width  / TetrisBoard.BOARDW;
-    int vstep = TetrisRect.height / TetrisBoard.BOARDH;
-    int hmargin = Math.max(hstep / 14, 1);
-    int vmargin = Math.max(vstep / 14, 1);
-
-    for (int j = 0; j < TetrisBoard.BOARDH; j++) {
-      for (int i = 0; i < TetrisBoard.BOARDW; i++) {
-        for (int y = vmargin + j * vstep; y < (j+1) * vstep - vmargin; y++) {
-          for (int x = hmargin + i * hstep; x < (i+1) * hstep - hmargin; x++) {
-       
-          }
-        }
-      }
-    }
-    return detectBoard;
-  }
-  
   public enum MoveType { 
     UP, DOWN, LEFT, RIGHT, SHIFT, SPACE, CLICK, CTRL
         }
@@ -156,7 +127,7 @@ public class TetrisWebsiteInteraction {
   // simulate a key press
   public static void  pressKey(MoveType t) {
 
-    robot.delay(KEYDELAY);
+    robot.delay(OTHDELAY);
     System.out.println(t.toString());
 
     try { 
@@ -192,6 +163,14 @@ public class TetrisWebsiteInteraction {
 
     
   public static void doMove(TetrisMove move, int type) {
+    // sets the number of milliseconds this robot sleeps after
+    // generating an event.
+    robot.setAutoDelay(AUTODELAY);
+    // sets whether this robot automatically invokes waitForIdle 
+    // after generating an event.
+    robot.setAutoWaitForIdle(true);
+
+
     // extra delay after pressing "SPACE"
     robot.delay(SPACEDELAY); // must be done in the beginning 
     // because of detection of Tetromino
@@ -223,48 +202,53 @@ public class TetrisWebsiteInteraction {
     pressKey(MoveType.SPACE);
   }
 
-
-  // initialize robot
-  public static void initRobot() {
-    try { 
-      robot = new Robot();
-    }
-    catch (AWTException e) {
-      System.out.println("Error while constructing Robot object");
-    }
-    // sets the number of milliseconds this robot sleeps after
-    // generating an event.
-    robot.setAutoDelay(AUTODELAY);
-    // sets whether this robot automatically invokes waitForIdle 
-    // after generating an event.
-    robot.setAutoWaitForIdle(true);
-  }
-
-
-  
+    
+    
   public static void main(String[] args) throws AWTException {
-    // initialize robot
-    initRobot();
-
-    // initialize the Tetris board
+	
+    robot = new Robot();
+    // mark the boundaries of the rectangle of the very first Tetromino
+    Point ptf1 = new Point(), ptf2 = new Point();
+    // rectangle formed by ptf1, ptf2
+    Rectangle rectf = new Rectangle();
+    // mark the boundaries of the rectangle which is used for looking up 
+    // the next Tetromino
+    Point pt1 = new Point(), pt2 = new Point();
+    // rectangle formed by pt1 and pt2
+    Rectangle rect = new Rectangle();
+	
     TetrisBoard currBoard = new TetrisBoard();
+    TetrisStrategy strategy = new TetrisStrategy();
+	
+    countdown(3);
+    // Capture very first Tetromino
+    System.out.println("first rectangle");
+    chooseRectangle(ptf1, ptf2);
+    setRectangle(ptf1, ptf2, rectf);
+    System.out.println("------------------");
+    countdown(3);
+	
+    // Capture pixel in the "hold" box by moving your mouse to that position
+    // the color of the tile identifies its type 
+    // point  = (MouseInfo.getPointerInfo()).getLocation();
+	
+    System.out.println("second rectangle");
+    chooseRectangle(pt1, pt2);
+    setRectangle(pt1, pt2, rect);
 
-    // get rectangle TetrisRect specifying the Tetris board
-    chooseRectangle(3, 2);
-
-    // currently we only look at the Tetris board for
-    // determining the current Tetromino, the
-    // "next" window is ignored
     int type;
     for (int t = 1; ; t++) {
-
-      type = detectTetrominoSimple();
+      if (t == 1) {
+        type = detectTetromino(rectf);
+      }
+      else {
+        type = detectTetromino(rectf);
+      }
       if (type == -1) {
         System.out.println("none detected");
         continue;
       }
-
-      TetrisMove move = TetrisStrategy.computeBestMove(currBoard, type);
+      TetrisMove move = strategy.computeBestMove(currBoard, type);
       doMove(move, type);
       currBoard.dropTetromino(type, move.rot, move.pos, currBoard.tilemarker++);
       currBoard.clearLinesUpdateHeight();

@@ -32,9 +32,7 @@ public class TetrisBoard {
 
   private int[][] Board; // board, 0 unfilled, i>0 filled
   private int[]  Height; // height at pos  x
-  public  int tilemarker = 3;
-  // 1 is used for wall boundaries at initialization
-  // 2 is used for detectTetrisBoard (for correction)
+  public  int tilemarker = 2; // 1 is used for wall boundaries at initialization
   public  int score = 0; // sum of all max(number of subsequently cleared lines - 1, 0)
   public  boolean filledlinebef = false; // saves if a line was filled in the previous turn
 
