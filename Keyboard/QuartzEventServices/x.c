@@ -7,12 +7,11 @@
 
 int main() {
     CGEventRef mkey = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)7, true);
-    CGEventRef fkey = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)7, false);
     CGEventPost(kCGSessionEventTap, mkey);
-    nanosleep((struct timespec[]){{0, DELAY}}, NULL);
-    CGEventPost(kCGSessionEventTap, fkey);
     CFRelease(mkey);
+    
+    CGEventRef fkey = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)7, false);
+    CGEventPost(kCGSessionEventTap, fkey);
     CFRelease(fkey);
-    nanosleep((struct timespec[]){{0, DELAY}}, NULL);
     return 0;
 }
