@@ -5,11 +5,28 @@
 
 package TetrisBattleBot;
 
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.MouseInfo;
+
 import java.lang.Math;
 import java.awt.image.BufferedImage;
 
 public class WebsiteInteraction {
+
+    public static Robot robot;
+
+    // key press delay for placing Tetromino
+    public static final int SPACEDELAY = 250;
+    // key press delay for other movements
+    public static final int OTHDELAY   = 50;
+    // number of milliseconds this robot sleeps
+    // after generating an event
+    public static final int AUTODELAY  = 50;
 
     // types of Tetrominoes
     //
@@ -27,7 +44,7 @@ public class WebsiteInteraction {
     public static final int[][] PMATCH = {{251,184,0},{238,26,72},{117,208,0},{191,47,163},{54,174,255},{49,69,237},{247,106,0}};
 
     // countdown for delay
-    public static void countdown(int s, Robot robot) {
+    public static void countdown(int s) {
 	for (int i = s; i >= 1; i--) {
 	    System.out.println(i + "sec...");
 	    robot.delay(1000);
@@ -35,15 +52,14 @@ public class WebsiteInteraction {
     }
 
     // sets appropriate values for pt1 and pt2
-    public static void chooseRectangle(Robot robot, Point pt1, Point pt2) { 
-	//	countdown(2, robot);
+    public static void chooseRectangle(Point pt1, Point pt2) { 
 	Point tmp;
 	tmp = MouseInfo.getPointerInfo().getLocation();
 	pt1.x = tmp.x; 
 	pt1.y = tmp.y;
 	System.out.println(pt1.toString());
 
-	countdown(2, robot);	
+	countdown(2);	
 
 	tmp = MouseInfo.getPointerInfo().getLocation();
 	pt2.x = tmp.x;
@@ -76,7 +92,7 @@ public class WebsiteInteraction {
     
     
     // detect Tetromino using pixels in rect from screen
-    public static int detectTetromino(Robot robot, Rectangle rect) {
+    public static int detectTetromino(Rectangle rect) {
 	BufferedImage Img = robot.createScreenCapture(rect);
 	//	Img.getRGB(rect.x, rect.y, rect.width, rect.height, rgb, 0, rect.width);
 	for (int x = 0; x < rect.width; x++) {
@@ -100,97 +116,97 @@ public class WebsiteInteraction {
 	    }
     
 
+    // simulate a key press in detail - used in pressKey(..)
+    private static void type(int key) {
+	robot.delay(40);
+	robot.keyPress(key);
+	robot.keyRelease(key);
+    }
 
-    public static void  pressKey(MoveType t, Runtime rt) {
-	try {
-	    /*
-	      AppleScript seems not to be working... because Google Chrome gives each (tab and) plug-in
-	      its own process to work the click only affects the current tab but isn't 
-	      caught by the flash plug-in. 
-	    */
-	    
-	    System.out.println(t.toString());
 
+    // simulate a key press
+    public static void  pressKey(MoveType t) {
+
+	robot.delay(OTHDELAY);
+	System.out.println(t.toString());
+
+	try { 
 	    switch (t) {       
-	    case UP:    rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/up");
+	    case UP:    type(KeyEvent.VK_UP);
 		break;
-	    case DOWN:  rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/down");
+	    case DOWN:  type(KeyEvent.VK_DOWN);
 		break;
-	    case LEFT:  rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/left");
+	    case LEFT:  type(KeyEvent.VK_LEFT);
 		break;
-	    case RIGHT: rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/right");
+	    case RIGHT: type(KeyEvent.VK_RIGHT);
 		break;
-	    case SHIFT: rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/shift");
+	    case SHIFT: type(KeyEvent.VK_SHIFT);
 		break;
-	    case SPACE: rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/space");
+	    case SPACE: type(KeyEvent.VK_SPACE);
 		break;
-	    case CTRL:  rt.exec("./TetrisBattleBot/Keyboard/QuartzEventServices/ctrl");
+	    case CTRL:  // type(KeyEvent.VK_CONTROL); // control key not working
+		type(KeyEvent.VK_SLASH); // corresponds to 'z' (for Dvorak keyboard layout only)
 		break;
-	    case CLICK: rt.exec("./TetrisBattleBot/Mouse/MouseTools -leftClick");
+	    case CLICK: // left click
+		robot.mousePress(InputEvent.BUTTON1_MASK);
+		robot.delay(200);
+		robot.mouseRelease(InputEvent.BUTTON1_MASK);
+		robot.delay(200);
 		break;
 	    }
+	    
 	} catch (Throwable trw)
 	    {
 		trw.printStackTrace();
 	    }
     }
-    
-    public static void clickPressKey(MoveType t, Runtime rt, Robot robot) {
-	// Setting the delays...
-	//
-	// Version 4
-	// no click, 1 time robot.delay in clickPressKey: 200
-	// additional delay 200 at beginning of doMove(...) method
-	// delay in QuartzEventServices: 50000000L
 
-	// Version 5
-	// no click, 1 time robot delay ni cilckPressKey: 100
-	// SPACEDELAY 250
-	// delay in QuartzEventServices: 50000000L
-
-	// robot.delay(200);
-	//pressKey(MoveType.CLICK, rt);
-	robot.delay(400); // or: 100
-	pressKey(t, rt);
-    }
     
-    public static void doMove(TetrisMove move, Robot robot, int type) {
-	final int SPACEDELAY = 500;
+    public static void doMove(TetrisMove move, int type) {
+	// sets the number of milliseconds this robot sleeps after
+	// generating an event.
+	robot.setAutoDelay(AUTODELAY);
+	// sets whether this robot automatically invokes waitForIdle 
+	// after generating an event.
 	robot.setAutoWaitForIdle(true);
-	Runtime rt = Runtime.getRuntime();
+
+
 	// extra delay after pressing "SPACE"
-	robot.delay(SPACEDELAY); // must be done in the beginning (because of detection of Tetromino)
+	robot.delay(SPACEDELAY); // must be done in the beginning 
+                             	 // because of detection of Tetromino
 	
-	if (move.rot <= 3) { // instead of 2 - deactivate CTRL
+	if (move.rot <= 2) {
 	    for (int i = 0; i < move.rot; i++) {
-		clickPressKey(MoveType.UP, rt, robot);
+		pressKey(MoveType.UP);
 	    }
 	} 
-	/*	else { // move.rot == 3
-	    clickPressKey(MoveType.CTRL, rt, robot);
+	else {
+	    pressKey(MoveType.CTRL);
 	}
-	*/
+
 	int pos; // default starting position
 	if (type == 0) pos = TetrisBoard.LMARGIN + 4;
 	else pos = TetrisBoard.LMARGIN + 3;
 	
 	if (move.pos >= pos) {
 	    for (int i = pos; i < move.pos; i++) {
-		clickPressKey(MoveType.RIGHT, rt, robot);
+		pressKey(MoveType.RIGHT);
 	    }
 	}
 	else {
 	    for (int i = pos; i > move.pos; i--) {
-		clickPressKey(MoveType.LEFT, rt, robot);
+		pressKey(MoveType.LEFT);
 	    }
 	}
-	clickPressKey(MoveType.SPACE, rt, robot);
+
+	pressKey(MoveType.SPACE);
     }
 
     
     
     public static void main(String[] args) throws AWTException {
 	
+	robot = new Robot();
 	// mark the boundaries of the rectangle of the very first Tetromino
 	Point ptf1 = new Point(), ptf2 = new Point();
 	// rectangle formed by ptf1, ptf2
@@ -201,40 +217,39 @@ public class WebsiteInteraction {
 	// rectangle formed by pt1 and pt2
 	Rectangle rect = new Rectangle();
 	
-	Robot robot = new Robot();
 	TetrisBoard currBoard = new TetrisBoard();
 	TetrisStrategy strategy = new TetrisStrategy();
 	
-	countdown(3, robot);
+	countdown(3);
 	// Capture very first Tetromino
 	System.out.println("first rectangle");
-	chooseRectangle(robot, ptf1, ptf2);
+	chooseRectangle(ptf1, ptf2);
 	setRectangle(ptf1, ptf2, rectf);
 	System.out.println("------------------");
-	countdown(3, robot);
+	countdown(3);
 	
 	// Capture pixel in the "hold" box by moving your mouse to that position
 	// the color of the tile identifies its type 
 	// point  = (MouseInfo.getPointerInfo()).getLocation();
 	
 	System.out.println("second rectangle");
-	chooseRectangle(robot, pt1, pt2);
+	chooseRectangle(pt1, pt2);
 	setRectangle(pt1, pt2, rect);
 
 	int type;
 	for (int t = 1; ; t++) {
 	    if (t == 1) {
-		type = detectTetromino(robot, rectf);
+		type = detectTetromino(rectf);
 	    }
 	    else {
-		type = detectTetromino(robot, rect);
+		type = detectTetromino(rectf);
 	    }
 	    if (type == -1) {
 		System.out.println("none detected");
 		continue;
 	    }
 	    TetrisMove move = strategy.computeBestMove(currBoard, type);
-	    doMove(move, robot, type);
+	    doMove(move, type);
 	    currBoard.dropTetromino(type, move.rot, move.pos, currBoard.tilemarker++);
 	    currBoard.clearLinesUpdateHeight();
 	    currBoard.printFullBoard();

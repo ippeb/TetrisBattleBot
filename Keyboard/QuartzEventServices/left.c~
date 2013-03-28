@@ -7,11 +7,10 @@
 
 int main() {
     CGEventRef mkey = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)123, true);
-    CGEventPost(kCGSessionEventTap, mkey);
-    CFRelease(mkey);
-
     CGEventRef fkey = CGEventCreateKeyboardEvent(NULL, (CGKeyCode)123, false);
+    CGEventPost(kCGSessionEventTap, mkey);
     CGEventPost(kCGSessionEventTap, fkey);
+    CFRelease(mkey);
     CFRelease(fkey);
     return 0;
 }
