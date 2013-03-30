@@ -22,7 +22,7 @@ public class TetrisWebsiteInteraction {
 
   // delay after pressing space if it will 
   // lead to a filled line
-  public static final int FILLLINEDELAY = 0;
+  public static final int FILLLINEDELAY = 300;
   // key press delay for other movements
   public static final int KEYDELAY   = 30;
   // number of milliseconds this robot sleeps
