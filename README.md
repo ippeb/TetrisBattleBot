@@ -22,8 +22,8 @@ How to use
 ### Download / Installation
 
 Click on https://github.com/ippeb/TetrisBattleBot and then click on the ZIP button
-just to the left of the repository URL field (or if you have installed git, simply
-run `git clone git://github.com/ippeb/TetrisBattleBot` in your Terimnal).
+just to the left of the repository URL field.
+
 
 
 ### Run / Usage
