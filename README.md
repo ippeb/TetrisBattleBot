@@ -13,8 +13,11 @@ The goal of this Tetris game is to maximize the number of subsequently filled
 lines.
 
 
+
+
 How to use
 ----------
+
 
 ### Download / Installation
 
@@ -22,16 +25,18 @@ Click on https://github.com/ippeb/TetrisBattleBot and then click on the ZIP butt
 just to the left of the repository URL field (or if you have installed git, simply
 run `git clone git://github.com/ippeb/TetrisBattleBot` in your Terimnal).
 
+
 ### Run / Usage
 
-Open your Terminal and go to the directory which contains the folder
-TertisBattleBoth. Now, simply type
-`java classes/TetrisBattleBot/TetrisWebsiteInteraction`
+Open your Terminal and change your current directory to TetrisBattleBot.
+Now, simply type `java classes/TetrisBattleBot/TetrisWebsiteInteraction`
 to run the program.
+
 
 ### Exit the program
 
 Type Ctrl+C in your Terminal.
+
 
 ### Detection of the Tetris board
 
@@ -42,13 +47,18 @@ seconds). Then you have two seconds to move your cursor to the
 lower left corner of the Tetris board. In the Terminal the
 coordinates of those two corners are displayed.
 
+
+
+
 Features
 --------
+
 
 ### Cross-platform
 
 The key presses are currently simulated using java.awt.Robot and thus
 should be OS independent.
+
 
 ### Feedback loop
 
