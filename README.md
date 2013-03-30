@@ -63,7 +63,7 @@ should be OS independent.
 
 After every simulated key press (rotation, horizontal or vertical
 movement of the Tetromino) the bot analyzes the current Tetris board
-and so checks whether the key press was actually executed in the
+and checks whether the key press was actually executed in the
 Flash game. If not, the key press will then be repeated. If a
 different Tetris board configuration was detected (maybe the user has typed
 a key by mistake) the program adapts to the new Tetris board
