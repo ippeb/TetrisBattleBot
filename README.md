@@ -35,7 +35,7 @@ to run the program.
 
 ### Exit the program
 
-Type Ctrl+C in your Terminal.
+Type Ctrl+C in your Terminal to exit the program.
 
 
 ### Detection of the Tetris board
