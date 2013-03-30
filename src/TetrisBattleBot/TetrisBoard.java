@@ -99,6 +99,23 @@ public class TetrisBoard {
     updateHeight();
   }    
   
+  // compare current Tetris board to argument,
+  // only the contents of the board is compared
+  // not included are:
+  // * fields within top, left, right and bottom margin
+  // * Height array
+  // * member variables such as "score", "filledlinebef",
+  //   "tilemarker", etc.
+  public int compare(TetrisBoard TB) {
+    int diff = 0;
+    for (int j = TMARGIN; j < BOARDH + TMARGIN; j++)
+      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
+        if (!( (Board[j][i] == 0 && TB[j][i] == 0) ||
+               (Board[j][i]  > 0 && TB[j][i]  > 0) ))
+          diff++;
+    return diff;
+  }
+  
   // get height at position "pos"
   public int getHeight(int pos) {
     return Height[pos];
