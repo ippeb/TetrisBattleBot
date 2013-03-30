@@ -28,8 +28,8 @@ just to the left of the repository URL field.
 
 ### Run / Usage
 
-Open your Terminal and change your current directory to TetrisBattleBot.
-Now, simply type `java classes/TetrisBattleBot/TetrisWebsiteInteraction`
+Open your Terminal and change your directory to `TetrisBattleBot/classes`.
+Now, simply type `java TetrisBattleBot/TetrisWebsiteInteraction`
 to run the program.
 
 
