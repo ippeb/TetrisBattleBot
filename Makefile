@@ -39,14 +39,14 @@ JC = javac
 #
 
 CLASSES = \
-	src/TetrisBoard.java \
-	src/TetrisMove.java \
-	src/TetrisStrategy.java \
-	src/TetrisWebsiteInteraction.java \
-	src/Testing/CapturePixel.java \
-	src/Testing/TetrisRandom.java \
-	src/Testing/GetMouseLocation.java \
-	src/Testing/TetrisSimulation.java
+	src/TetrisBattleBot/TetrisBoard.java \
+	src/TetrisBattleBot/TetrisMove.java \
+	src/TetrisBattleBot/TetrisStrategy.java \
+	src/TetrisBattleBot/TetrisWebsiteInteraction.java \
+	src/TetrisBattleBot/Testing/CapturePixel.java \
+	src/TetrisBattleBot/Testing/TetrisRandom.java \
+	src/TetrisBattleBot/Testing/GetMouseLocation.java \
+	src/TetrisBattleBot/Testing/TetrisSimulation.java
 
 #
 # the default make target entry
