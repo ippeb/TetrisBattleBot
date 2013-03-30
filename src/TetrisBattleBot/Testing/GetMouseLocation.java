@@ -9,8 +9,10 @@ import java.awt.MouseInfo;
 public class GetMouseLocation {
 
   public static void main(String args[]) {
-    Point pt = new Point(MouseInfo.getPointerInfo().getLocation());
-    System.out.println(pt.toString());
+    while (true) {
+      Point pt = new Point(MouseInfo.getPointerInfo().getLocation());
+      System.out.println(pt.toString());
+    }
   }
 }
  

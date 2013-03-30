@@ -8,7 +8,8 @@
 package TetrisBattleBot;
 
 public class TetrisBoard {
-  // types of Tetrominoes
+  //
+  // Types of Tetrominoes
   //
   // 0  **    1 **     2    **   3    *      4  ****   5 *        6   *
   //    **       **        **        ***                 ***        ***
@@ -23,19 +24,47 @@ public class TetrisBoard {
     {{0,0,0,0},{0,0,0,0},{0,0,1,0},{1,1,1,0}}, {{0,0,0,0},{0,1,0,0},{0,1,0,0},{0,1,1,0}}, {{0,0,0,0},{0,0,0,0},{1,1,1,0},{1,0,0,0}}, {{0,0,0,0},{1,1,0,0},{0,1,0,0},{0,1,0,0}}, // 6
   };
 
-  public static final int BOARDH = 20;  // height
-  public static final int BOARDW = 10;  // width 
+  //
+  // Board Layout
+  //
+  // /-----------------------------\
+  // |         TMARGIN             |
+  // |                             |
+  // |        /------\             |
+  // |        |BOARDW|             |
+  // |        |      |             |
+  // |        |      |             |
+  // |        |B     |             |
+  // |        |O     |             |
+  // |        |A     |             |
+  // |LMARGIN |R     |    RMARGIN  |
+  // |        |D     |             |
+  // |        |H     |             |
+  // |        |      |             |
+  // |        |      |             |
+  // |        \------/             |
+  // |                             |
+  // |         BMARGIN             |
+  // |                             |
+  // \-----------------------------/
+  //
+  public static final int BOARDH  = 20; // height
+  public static final int BOARDW  = 10; // width 
   public static final int LMARGIN = 20; // left margin
   public static final int RMARGIN = 20; // right margin
   public static final int TMARGIN = 20; // top margin
   public static final int BMARGIN = 20; // bottom margin
 
-  private int[][] Board; // board, 0 unfilled, i>0 filled
+  private int[][] Board; // board, 0 unfilled, i > 0 filled
   private int[]  Height; // height at pos  x
-  public  int tilemarker = 2; // 1 is used for wall boundaries at initialization
+  public  int tilemarker = 22;
+  // 1 is used for wall boundaries at initialization
+  // 10 ... 16 is used by method detectTetrisBoard
+  // used in TetrisWebsiteInteraction.java
   public  int score = 0; // sum of all max(number of subsequently cleared lines - 1, 0)
   public  boolean filledlinebef = false; // saves if a line was filled in the previous turn
 
+  // no-argument constructor
   public TetrisBoard() {
     Board = new int [BOARDH + TMARGIN + BMARGIN] [BOARDW + LMARGIN + RMARGIN];
 
@@ -51,6 +80,25 @@ public class TetrisBoard {
       Height[i] = TMARGIN + BOARDH;
   }
 
+  // constructor that initializes the Tetris board with
+  // an int array of dimensions BOARDH x BOARDW
+  public TetrisBoard(int[][] A) {
+    Board = new int [BOARDH + TMARGIN + BMARGIN] [BOARDW + LMARGIN + RMARGIN];
+
+    for (int j = 0; j < BOARDH + TMARGIN + BMARGIN; j++)
+      for (int i = 0; i < BOARDW + LMARGIN + RMARGIN; i++) 
+        Board[j][i] = 1;
+    for (int j = 0; j < TMARGIN; j++)
+      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
+        Board[j][i] = 0;
+    for (int j = TMARGIN; j < BOARDH + TMARGIN; j++)
+      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
+        Board[j][i] = A[j - TMARGIN][i - LMARGIN];
+
+    Height = new int [BOARDW + LMARGIN + RMARGIN];
+    updateHeight();
+  }    
+  
   // get height at position "pos"
   public int getHeight(int pos) {
     return Height[pos];
@@ -245,7 +293,7 @@ public class TetrisBoard {
       }
       System.out.println("");
     }
-    // System.out.println("Score "+score);
+    // System.out.println("Score " + score);
     /**/
     System.out.println("HEIGHT");
     for (int i = LMARGIN; i < LMARGIN + BOARDW; i++){

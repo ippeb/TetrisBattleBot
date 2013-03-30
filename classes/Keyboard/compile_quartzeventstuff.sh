@@ -1,0 +1,10 @@
+gcc -Wall -o space  ../../src/Keyboard/QuartzEventServices/space.c -framework ApplicationServices
+gcc -Wall -o right  ../../src/Keyboard/QuartzEventServices/right.c -framework ApplicationServices
+gcc -Wall -o left   ../../src/Keyboard/QuartzEventServices/left.c  -framework ApplicationServices
+gcc -Wall -o up     ../../src/Keyboard/QuartzEventServices/up.c    -framework ApplicationServices
+gcc -Wall -o down   ../../src/Keyboard/QuartzEventServices/down.c  -framework ApplicationServices
+gcc -Wall -o shift  ../../src/Keyboard/QuartzEventServices/shift.c -framework ApplicationServices
+gcc -Wall -o ctrl   ../../src/Keyboard/QuartzEventServices/ctrl.c  -framework ApplicationServices
+gcc -Wall -o x      ../../src/Keyboard/QuartzEventServices/x.c     -framework ApplicationServices
+gcc -Wall -o z      ../../src/Keyboard/QuartzEventServices/z.c     -framework ApplicationServices
+gcc -Wall -o c      ../../src/Keyboard/QuartzEventServices/c.c     -framework ApplicationServices
