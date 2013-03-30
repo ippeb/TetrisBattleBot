@@ -14,8 +14,8 @@ The goal of this Tetris game is to maximize the number of subsequently filled
 lines.
 
 
-Note: this game was only tested on [http://www.tetrisfriends.com/](http://www.tetrisfriends.com/)
-
+Note: This game was only tested on [http://www.tetrisfriends.com/](http://www.tetrisfriends.com/); Also, 
+the keyboard settings need to be switched to US - Dvorak International.
 
 
 How to use
