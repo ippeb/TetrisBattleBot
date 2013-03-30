@@ -22,7 +22,7 @@ How to use
 ### Download / Installation
 
 Click on https://github.com/ippeb/TetrisBattleBot and then click on the ZIP button
-just to the left of the repository URL field.
+just to the left of the repository URL field and unzip the file.
 
 
 
