@@ -33,11 +33,6 @@ Now, simply type `java TetrisBattleBot/TetrisWebsiteInteraction`
 to run the program.
 
 
-### Exit the program
-
-Type Ctrl+C in your Terminal to exit the program.
-
-
 ### Detection of the Tetris board
 
 Currently, there is no automated detection of the Tetris board.
@@ -47,6 +42,10 @@ seconds). Then you have two seconds to move your cursor to the
 lower left corner of the Tetris board. In the Terminal the
 coordinates of those two corners are displayed.
 
+
+### Exit the program
+
+Type Ctrl+C in your Terminal to exit the program.
 
 
 
