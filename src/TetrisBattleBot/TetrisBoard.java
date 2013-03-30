@@ -282,9 +282,9 @@ public class TetrisBoard {
       filledlinebef = false;
       return ;
     }
-    filledlinebef = true;
     if (filledlinebef) score += lcount;
     else score += lcount - 1;
+    filledlinebef = true;
   }
 
   // clear lines and update array Height
@@ -302,7 +302,6 @@ public class TetrisBoard {
       }
       if (!zero) H[i] = true;
     }
-
 
     int lcount = 0;
     for (int i = TMARGIN + BOARDH - 1; i >= 0; i--) {
@@ -363,7 +362,8 @@ public class TetrisBoard {
 
   // print the current Tetris board
   // mark wall boundaries with '#'
-  // also prints additional debug info such as score, tilemarker, height
+  // 
+  // may also print additional debug info such as score, tilemarker, height 
   public void printFullBoard(){
     for (int j = TMARGIN; j < TMARGIN + BOARDH + 1; j++){
       for (int i = LMARGIN - 1; i < LMARGIN + BOARDW + 1; i++){
@@ -371,13 +371,13 @@ public class TetrisBoard {
       }
       System.out.println("");
     }
-    System.out.println("Score: " + score + " Tilemarker: " + tilemarker + " Filledlinebef: " + filledlinebef);
-
-    System.out.println("HEIGHT");
-    for (int i = LMARGIN; i < LMARGIN + BOARDW; i++){
-      System.out.print(" "+Height[i]+" ");
-    }
-    System.out.println("");
+    //    System.out.println("Score: " + score + " Tilemarker: " + tilemarker + " Filledlinebef: " + filledlinebef);
+    //
+    //    System.out.println("HEIGHT");
+    //    for (int i = LMARGIN; i < LMARGIN + BOARDW; i++){
+    //      System.out.print(" "+Height[i]+" ");
+    //    }
+    //    System.out.println("");
   }
 
   // returns true if a Tetromino type i, rotated by j*90 degrees at position x=k, y=h

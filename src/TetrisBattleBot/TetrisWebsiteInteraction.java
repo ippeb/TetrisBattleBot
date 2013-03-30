@@ -20,14 +20,18 @@ public class TetrisWebsiteInteraction {
 
   public static Robot robot;
 
-  // key press delay for placing Tetromino
-  public static final int SPACEDELAY = 150;
+  // delay after pressing space if it will 
+  // lead to a filled line
+  public static final int FILLLINEDELAY = 0;
   // key press delay for other movements
-  public static final int KEYDELAY   = 500; // bef: 50
+  public static final int KEYDELAY   = 30;
   // number of milliseconds this robot sleeps
   // after generating an event
   public static final int AUTODELAY  = 50;
+  // random delay range
+  public static final int RANDDELAYRANGE = 20;
 
+  
   // Types of Tetrominoes
   //
   // 0  **    1 **     2    **   3    *      4  ****   5 *        6   *
@@ -59,6 +63,13 @@ public class TetrisWebsiteInteraction {
   
   public static Rectangle TetrisRect;
 
+
+
+  // delay by d + rand(0...RANDDELAYRANGE) milliseconds
+  public static void delay(int d) {
+    robot.delay((int) (Math.random() * RANDDELAYRANGE) + d);
+  }
+  
 
   // countdown for delay (in seconds)
   public static void countdown(int s) {
@@ -173,7 +184,7 @@ public class TetrisWebsiteInteraction {
 
   // simulate a key press in detail - used in pressKey(..)
   private static void type(int key) {
-    robot.delay(40);
+    delay(KEYDELAY);
     robot.keyPress(key);
     robot.keyRelease(key);
   }
@@ -181,9 +192,6 @@ public class TetrisWebsiteInteraction {
 
   // simulate a key press
   public static void  pressKey(MoveType t) {
-
-    robot.delay(KEYDELAY);
-    System.out.println(t.toString());
 
     try { 
       switch (t) {       
@@ -209,6 +217,9 @@ public class TetrisWebsiteInteraction {
           robot.delay(200);
           break;
       }
+
+      System.out.println(t.toString());
+      
 	    
     } catch (Throwable trw)
     {
@@ -217,11 +228,7 @@ public class TetrisWebsiteInteraction {
   }
 
     
-  public static void doMove(TetrisMove move, int type) {
-    // extra delay after pressing "SPACE"
-    robot.delay(SPACEDELAY); // must be done in the beginning 
-    // because of detection of Tetromino
-	
+  public static void doMove(TetrisMove move, int type) {	
     if (move.rot <= 2) {
       for (int i = 0; i < move.rot; i++) {
         pressKey(MoveType.UP);
@@ -247,6 +254,7 @@ public class TetrisWebsiteInteraction {
     }
 
     pressKey(MoveType.SPACE);
+    robot.delay(FILLLINEDELAY);  // extra delay after pressing "SPACE"
   }
 
 
@@ -292,17 +300,17 @@ public class TetrisWebsiteInteraction {
 
       TetrisMove move = TetrisStrategy.computeBestMove(currBoard, type);
       // do the move and update the board accordingly
-      doMove(move, type);
+      doMove(move, type); // <-- contains small Feedback
       currBoard.dropTetromino(type, move.rot, move.pos, currBoard.tilemarker++);
       currBoard.clearLinesUpdateHeight();
 
 
-      // "Feedback loop"
+      // large Feedback
       int diff = currBoard.verifyCorrect(detectTetrisBoard(OTHERRGB, currBoard));
-      if (diff > 0)   // only debug
-        System.out.println("Feedback loop: ERROR occured - diff = " + diff); // only debug
-
+      
       currBoard.printFullBoard();   // only debug
+      if (diff > 0)                 // only debug
+        System.out.println("large Feedback loop: ERROR occured - diff = " + diff); // only debug
     }
   }
 }
