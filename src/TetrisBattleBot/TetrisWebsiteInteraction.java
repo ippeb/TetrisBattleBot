@@ -297,7 +297,7 @@ public class TetrisWebsiteInteraction {
       currBoard.dropTetromino(type, move.rot, move.pos, currBoard.tilemarker++);
       currBoard.clearLinesUpdateHeight();
       currBoard.printFullBoard();
-      // for testing:
+      // for testing :
       detectTetrisBoard().printFullBoard();
       
       System.out.println("SCORE: " + currBoard.score);
