@@ -28,9 +28,6 @@ Open your Terminal and go to the directory which contains the folder
 TertisBattleBoth. Now, simply type `java TetrisBattleBot/TetrisWebsiteInteraction`
 to run the program.
 
-Features
---------
-
 ### Exit the program
 
 Type Ctrl+C in your Terminal.
@@ -43,6 +40,9 @@ the upper left corner of the Tetris board (within the first three
 seconds). Then you have two seconds to move your cursor to the 
 lower left corner of the Tetris board. In the Terminal the 
 coordinates of those two corners are displayed. 
+
+Features
+--------
 
 ### Cross-platform
 
