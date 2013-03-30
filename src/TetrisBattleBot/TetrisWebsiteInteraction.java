@@ -138,7 +138,7 @@ public class TetrisWebsiteInteraction {
   // detect current Tetris board configuration
   // the different types of the Tetrominos are marked with
   // integers i = 10 through 16, i representing Tetromino type i - 10
-  public static TetrisBoard detectTetrisBoard(int[][] rgbvalues) {
+  public static TetrisBoard detectTetrisBoard(int[][] rgbvalues, TetrisBoard TB) {
     int[][] A = new int[TetrisBoard.BOARDH][TetrisBoard.BOARDH];
 
     BufferedImage Img = robot.createScreenCapture(TetrisRect);
@@ -163,7 +163,7 @@ public class TetrisWebsiteInteraction {
         A[j][i] = (ret == -1) ? 0 : ret + 10;
       }
     }
-    return new TetrisBoard(A);
+    return new TetrisBoard(A, TetrisBoard.TILEMARKERINIT, TB.score, TB.filledlinebef);
   }
 
   public enum MoveType { 
@@ -278,12 +278,12 @@ public class TetrisWebsiteInteraction {
     // get rectangle TetrisRect specifying the Tetris board
     chooseRectangle(3, 2);
 
-    // currently we only look at the Tetris board for
+    // we only look at the Tetris board for
     // determining the current Tetromino, the
     // "next" window is ignored
     int type;
     for (int t = 1; ; t++) {
-
+      // detect current tetromino
       type = detectTetrominoSimple();
       if (type == -1) {
         System.out.println("none detected");
@@ -291,18 +291,18 @@ public class TetrisWebsiteInteraction {
       }
 
       TetrisMove move = TetrisStrategy.computeBestMove(currBoard, type);
+      // do the move and update the board accordingly
       doMove(move, type);
       currBoard.dropTetromino(type, move.rot, move.pos, currBoard.tilemarker++);
       currBoard.clearLinesUpdateHeight();
 
-      currBoard.printFullBoard();
 
-      // for testing :
-      detectTetrisBoard(CURRENTRGB).printFullBoard();
-      detectTetrisBoard(OTHERRGB).printFullBoard();
-      
-      System.out.println("SCORE: " + currBoard.score);
+      // "Feedback loop"
+      int diff = currBoard.verifyCorrect(detectTetrisBoard(OTHERRGB, currBoard));
+      if (diff > 0)   // only debug
+        System.out.println("Feedback loop: ERROR occured - diff = " + diff); // only debug
+
+      currBoard.printFullBoard();   // only debug
     }
-
   }
 }

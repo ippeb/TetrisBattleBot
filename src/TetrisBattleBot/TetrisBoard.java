@@ -54,20 +54,25 @@ public class TetrisBoard {
   public static final int RMARGIN = 20; // right margin
   public static final int TMARGIN = 20; // top margin
   public static final int BMARGIN = 20; // bottom margin
-
+  public static final int TILEMARKERINIT = 22;
   private int[][] Board; // board, 0 unfilled, i > 0 filled
   private int[]  Height; // height at pos  x
-  public  int tilemarker = 22;
-  // 1 is used for wall boundaries at initialization
-  // 10 ... 16 is used by method detectTetrisBoard
-  // used in TetrisWebsiteInteraction.java
-  public  int score = 0; // sum of all max(number of subsequently cleared lines - 1, 0)
-  public  boolean filledlinebef = false; // saves if a line was filled in the previous turn
+
+  public  int tilemarker; // marks the tiles, is incremented after every drop
+                          // at first it is initialized to TILEMARKERINIT
+  public  int score; // sum of all max(number of subsequently cleared lines - 1, 0)
+  public  boolean filledlinebef; // saves if a line was filled in the previous turn
 
   // no-argument constructor
   public TetrisBoard() {
+    // 1 is used for wall boundaries at initialization
+    // 10 ... 16 is used by method detectTetrisBoard
+    // in TetrisWebsiteInteraction.java
+    tilemarker = TILEMARKERINIT;
+    score = 0;
+    filledlinebef = false;
+    
     Board = new int [BOARDH + TMARGIN + BMARGIN] [BOARDW + LMARGIN + RMARGIN];
-
     for (int j = 0; j < BOARDH + TMARGIN + BMARGIN; j++)
       for (int i = 0; i < BOARDW + LMARGIN + RMARGIN; i++) 
         Board[j][i] = 1;
@@ -82,50 +87,65 @@ public class TetrisBoard {
 
   // constructor that initializes the Tetris board with
   // an int array of dimensions BOARDH x BOARDW
-  public TetrisBoard(int[][] A) {
+  public TetrisBoard(int[][] A, int tilemarker, int score, boolean filledlinebef) {
+    this.tilemarker = tilemarker;
+    this.score = score;
+    this.filledlinebef = false;
+    
     Board = new int [BOARDH + TMARGIN + BMARGIN] [BOARDW + LMARGIN + RMARGIN];
-
     for (int j = 0; j < BOARDH + TMARGIN + BMARGIN; j++)
-      for (int i = 0; i < BOARDW + LMARGIN + RMARGIN; i++) 
+      for (int i = 0; i < BOARDW + LMARGIN + RMARGIN; i++)
         Board[j][i] = 1;
     for (int j = 0; j < TMARGIN; j++)
-      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
+      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++)
         Board[j][i] = 0;
     for (int j = TMARGIN; j < BOARDH + TMARGIN; j++)
-      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
+      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++)
         Board[j][i] = A[j - TMARGIN][i - LMARGIN];
 
     Height = new int [BOARDW + LMARGIN + RMARGIN];
+    for (int i = 0; i < BOARDW + LMARGIN + RMARGIN; i++)
+      Height[i] = TMARGIN + BOARDH;
     updateHeight();
-  }    
-
+  }
+  
   // constructor that initializes the contents of Tetris board
   // to those of another Tetris board
   public TetrisBoard(TetrisBoard TB) {
-    Board = new int [BOARDH + TMARGIN + BMARGIN] [BOARDW + LMARGIN + RMARGIN];
+    tilemarker = TB.tilemarker;
+    score = TB.score;
+    filledlinebef = TB.filledlinebef;
 
+    Board = new int [BOARDH + TMARGIN + BMARGIN] [BOARDW + LMARGIN + RMARGIN];
     for (int j = 0; j < BOARDH + TMARGIN + BMARGIN; j++)
       for (int i = 0; i < BOARDW + LMARGIN + RMARGIN; i++) 
-        Board[j][i] = 1;
-    for (int j = 0; j < TMARGIN; j++)
-      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
-        Board[j][i] = 0;
-    for (int j = TMARGIN; j < BOARDH + TMARGIN; j++)
-      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
         Board[j][i] = TB.Board[j][i];
 
     Height = new int [BOARDW + LMARGIN + RMARGIN];
-    updateHeight();
+    for (int i = 0; i < BOARDW + LMARGIN + RMARGIN; i++)
+      Height[i] = TB.Height[i];
   }    
 
-  // copy the contents of TB.Boad to this.Board (not including
+  // copy the contents of TB.Board to this.Board (not including
   // anything that is outside of BOARDW x BOARDH)
   public void copyContents(TetrisBoard TB) {
     for (int j = TMARGIN; j < BOARDH + TMARGIN; j++)
       for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
         Board[j][i] = TB.Board[j][i];
   }
-  
+
+  // copy the argument to current class
+  public void copy(TetrisBoard TB) {
+    this.tilemarker = TB.tilemarker;
+    this.score = TB.score;
+    this.filledlinebef = TB.filledlinebef;
+    for (int j = 0; j < BOARDH + TMARGIN + BMARGIN; j++)
+      for (int i = 0; i < BOARDW + LMARGIN + RMARGIN; i++) 
+        this.Board[j][i] = TB.Board[j][i];
+    for (int i = 0; i < BOARDW + LMARGIN + RMARGIN; i++)
+      this.Height[i] = TB.Height[i];
+  }
+
   // compare current Tetris board to argument,
   // only the contents of the board are compared
   // not included are:
@@ -146,12 +166,12 @@ public class TetrisBoard {
   }
 
   // compares two Tetris boards, if compare returns a positive value
-  // this.Board is modified to the argument TB
+  // this TetrisBoard takes the values of the argument TB.
   // returns the return value of the compare method
   public int verifyCorrect(TetrisBoard TB) {
     int comp = this.compare(TB);
     if (comp > 0) {
-      this.copyContents(TB);
+      this.copy(TB);
     }
     return comp;
   }
@@ -342,7 +362,8 @@ public class TetrisBoard {
   }
 
   // print the current Tetris board
-  // mark wall boundaries as '#'
+  // mark wall boundaries with '#'
+  // also prints additional debug info such as score, tilemarker, height
   public void printFullBoard(){
     for (int j = TMARGIN; j < TMARGIN + BOARDH + 1; j++){
       for (int i = LMARGIN - 1; i < LMARGIN + BOARDW + 1; i++){
@@ -350,14 +371,13 @@ public class TetrisBoard {
       }
       System.out.println("");
     }
-    // System.out.println("Score " + score);
-    /**/
+    System.out.println("Score: " + score + " Tilemarker: " + tilemarker + " Filledlinebef: " + filledlinebef);
+
     System.out.println("HEIGHT");
     for (int i = LMARGIN; i < LMARGIN + BOARDW; i++){
       System.out.print(" "+Height[i]+" ");
     }
     System.out.println("");
-    /**/
   }
 
   // returns true if a Tetromino type i, rotated by j*90 degrees at position x=k, y=h
@@ -387,7 +407,6 @@ public class TetrisBoard {
   // returns -1 if Tetromino couldn't be dropped (e.g. overlapped boundary)
   public int dropTetromino(int i, int j, int k, int marker) {
     int h=Math.min(Math.min(Height[k], Height[k+1]), Math.min(Height[k+2], Height[k+3]))-4;
-
     // there must be a collision 
     for (; ; h++) {
       if (collide(i, j, k, h)) break;
