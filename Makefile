@@ -46,6 +46,7 @@ CLASSES = \
 	src/TetrisBattleBot/Testing/CapturePixel.java \
 	src/TetrisBattleBot/Testing/TetrisRandom.java \
 	src/TetrisBattleBot/Testing/GetMouseLocation.java \
+	src/TetrisBattleBot/Testing/GetRGBValues.java \
 	src/TetrisBattleBot/Testing/TetrisSimulation.java
 
 #

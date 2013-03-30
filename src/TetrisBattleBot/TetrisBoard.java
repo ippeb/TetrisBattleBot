@@ -98,22 +98,62 @@ public class TetrisBoard {
     Height = new int [BOARDW + LMARGIN + RMARGIN];
     updateHeight();
   }    
+
+  // constructor that initializes the contents of Tetris board
+  // to those of another Tetris board
+  public TetrisBoard(TetrisBoard TB) {
+    Board = new int [BOARDH + TMARGIN + BMARGIN] [BOARDW + LMARGIN + RMARGIN];
+
+    for (int j = 0; j < BOARDH + TMARGIN + BMARGIN; j++)
+      for (int i = 0; i < BOARDW + LMARGIN + RMARGIN; i++) 
+        Board[j][i] = 1;
+    for (int j = 0; j < TMARGIN; j++)
+      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
+        Board[j][i] = 0;
+    for (int j = TMARGIN; j < BOARDH + TMARGIN; j++)
+      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
+        Board[j][i] = TB.Board[j][i];
+
+    Height = new int [BOARDW + LMARGIN + RMARGIN];
+    updateHeight();
+  }    
+
+  // copy the contents of TB.Boad to this.Board (not including
+  // anything that is outside of BOARDW x BOARDH)
+  public void copyContents(TetrisBoard TB) {
+    for (int j = TMARGIN; j < BOARDH + TMARGIN; j++)
+      for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
+        Board[j][i] = TB.Board[j][i];
+  }
   
   // compare current Tetris board to argument,
-  // only the contents of the board is compared
+  // only the contents of the board are compared
   // not included are:
   // * fields within top, left, right and bottom margin
   // * Height array
   // * member variables such as "score", "filledlinebef",
   //   "tilemarker", etc.
+  //
+  // returns number of differing fields
   public int compare(TetrisBoard TB) {
     int diff = 0;
     for (int j = TMARGIN; j < BOARDH + TMARGIN; j++)
       for (int i = LMARGIN; i < BOARDW + LMARGIN; i++) 
-        if (!( (Board[j][i] == 0 && TB[j][i] == 0) ||
-               (Board[j][i]  > 0 && TB[j][i]  > 0) ))
+        if (!( (Board[j][i] == 0 && TB.Board[j][i] == 0) ||
+               (Board[j][i]  > 0 && TB.Board[j][i]  > 0) ))
           diff++;
     return diff;
+  }
+
+  // compares two Tetris boards, if compare returns a positive value
+  // this.Board is modified to the argument TB
+  // returns the return value of the compare method
+  public int verifyCorrect(TetrisBoard TB) {
+    int comp = this.compare(TB);
+    if (comp > 0) {
+      this.copyContents(TB);
+    }
+    return comp;
   }
   
   // get height at position "pos"

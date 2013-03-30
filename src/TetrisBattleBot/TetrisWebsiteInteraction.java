@@ -28,12 +28,13 @@ public class TetrisWebsiteInteraction {
   // after generating an event
   public static final int AUTODELAY  = 50;
 
-  // types of Tetrominoes
+  // Types of Tetrominoes
   //
   // 0  **    1 **     2    **   3    *      4  ****   5 *        6   *
   //    **       **        **        ***                 ***        ***
   //
-  //    (r,g,b) 
+  //  RGB values for current Tetromino
+  //  (r,g,b) 
   // 0: 251 184 0
   // 1: 238 26 72
   // 2: 117 208 0
@@ -41,9 +42,21 @@ public class TetrisWebsiteInteraction {
   // 4: 54 174 255
   // 5: 49 69 237
   // 6: 247 106 0
-  public static final int[][] PMATCH = {{251,184,0},{238,26,72},{117,208,0},
-                                        {191,47,163},{54,174,255},{49,69,237},{247,106,0}};
+  public static final int[][] CURRENTRGB = {{251,184,0},{238,26,72},{117,208,0},
+                                            {191,47,163},{54,174,255},{49,69,237},{247,106,0}};
+  //  RGB values for all Tetrominos other than the current one
+  //  (r,g,b)
+  // 0: 216 144 0
+  // 1: 197 0 40
+  // 2: 83 167 0
+  // 3: 152 14 124
+  // 4: 32 134 212
+  // 5: 20 36 194
+  // 6: 212 71 0
+  public static final int[][] OTHERRGB = {{216,144,0},{197,0,40},{83,167,0},
+                                          {152,14,124},{32,134,212},{20,36,194},{212,71,0}};
 
+  
   public static Rectangle TetrisRect;
 
 
@@ -89,10 +102,10 @@ public class TetrisWebsiteInteraction {
   // match two rgb triples
   // returns matched type of Tetromino
   // if no match return 0
-  public static int matchTetromino(int[] rgb) {
+  public static int matchTetromino(int[] rgb, int[][] rgbvalues) {
     for (int i = 0; i < 7; i++) {
       for (int j = 0; j < 3; j++) {
-        if (PMATCH[i][j] != rgb[j]) break;
+        if (rgbvalues[i][j] != rgb[j]) break;
         if (j == 2) return i;
       }
     }
@@ -115,7 +128,7 @@ public class TetrisWebsiteInteraction {
     BufferedImage Img = robot.createScreenCapture(TetrisRect);
     for (int x = 0; x < TetrisRect.width; x++) {
       for (int y = 0; y <  TetrisRect.height; y++) {
-        int ret = matchTetromino(getRGB(Img, x, y));
+        int ret = matchTetromino(getRGB(Img, x, y), CURRENTRGB);
         if (ret != -1) return ret;
       }
     }
@@ -125,7 +138,7 @@ public class TetrisWebsiteInteraction {
   // detect current Tetris board configuration
   // the different types of the Tetrominos are marked with
   // integers i = 10 through 16, i representing Tetromino type i - 10
-  public static TetrisBoard detectTetrisBoard() {
+  public static TetrisBoard detectTetrisBoard(int[][] rgbvalues) {
     int[][] A = new int[TetrisBoard.BOARDH][TetrisBoard.BOARDH];
 
     BufferedImage Img = robot.createScreenCapture(TetrisRect);
@@ -134,20 +147,14 @@ public class TetrisWebsiteInteraction {
     int hmargin = Math.max(hstep / 14, 1);
     int vmargin = Math.max(vstep / 14, 1);
 
-    System.out.println(TetrisRect.toString());
-    System.out.println("hstep " + hstep + " vstep " + vstep + " hmargin " + hmargin + " vmargin " + vmargin);
-    System.out.println("WIDTH " + Img.getWidth() + " HEIGHT " + Img.getHeight());
-    
     for (int j = 0; j < TetrisBoard.BOARDH; j++) {
       for (int i = 0; i < TetrisBoard.BOARDW; i++) {
         int ret = -1;
         for (int y = vmargin + j * vstep; y < (j+1) * vstep - vmargin; y++) {
           for (int x = hmargin + i * hstep; x < (i+1) * hstep - hmargin; x++) {
-            ret = matchTetromino(getRGB(Img, x, y));
-            System.out.println("("+x+","+y+") ("+i+","+j+")");
+            ret = matchTetromino(getRGB(Img, x, y), rgbvalues);
             if (ret != -1) {
               // found Tetromino, break condition for loops
-              System.out.println("F  x "+x+" y "+y+" i "+i+" j "+j);
               x = TetrisRect.width;
               y = TetrisRect.height;
             }
@@ -156,18 +163,9 @@ public class TetrisWebsiteInteraction {
         A[j][i] = (ret == -1) ? 0 : ret + 10;
       }
     }
-    // DEBUG
-    for (int j = 0; j < TetrisBoard.BOARDH; j++) {
-      for (int i = 0; i < TetrisBoard.BOARDW; i++) {
-        System.out.print(A[j][i] + " ");
-      }
-      System.out.println("");
-    }
-    System.out.println("");
-    
     return new TetrisBoard(A);
   }
-  // /DEBUG
+
   public enum MoveType { 
     UP, DOWN, LEFT, RIGHT, SHIFT, SPACE, CLICK, CTRL
         }
@@ -201,7 +199,7 @@ public class TetrisWebsiteInteraction {
           break;
         case SPACE: type(KeyEvent.VK_SPACE);
           break;
-        case CTRL:  // type(KeyEvent.VK_CONTROL); // control key not working
+        case CTRL:                 // type(KeyEvent.VK_CONTROL); // control key not working
           type(KeyEvent.VK_SLASH); // corresponds to 'z' (for Dvorak keyboard layout only)
           break;
         case CLICK: // left click
@@ -296,9 +294,12 @@ public class TetrisWebsiteInteraction {
       doMove(move, type);
       currBoard.dropTetromino(type, move.rot, move.pos, currBoard.tilemarker++);
       currBoard.clearLinesUpdateHeight();
+
       currBoard.printFullBoard();
+
       // for testing :
-      detectTetrisBoard().printFullBoard();
+      detectTetrisBoard(CURRENTRGB).printFullBoard();
+      detectTetrisBoard(OTHERRGB).printFullBoard();
       
       System.out.println("SCORE: " + currBoard.score);
     }
