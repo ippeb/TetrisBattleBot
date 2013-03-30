@@ -23,7 +23,7 @@ public class TetrisWebsiteInteraction {
   // key press delay for placing Tetromino
   public static final int SPACEDELAY = 150;
   // key press delay for other movements
-  public static final int KEYDELAY   = 50;
+  public static final int KEYDELAY   = 500; // bef: 50
   // number of milliseconds this robot sleeps
   // after generating an event
   public static final int AUTODELAY  = 50;
@@ -46,7 +46,7 @@ public class TetrisWebsiteInteraction {
 
   public static Rectangle TetrisRect;
 
-  
+
   // countdown for delay (in seconds)
   public static void countdown(int s) {
     for (int i = s; i >= 1; i--) {
@@ -99,20 +99,23 @@ public class TetrisWebsiteInteraction {
     return -1; // no match
   }
     
-    
+  // returns red, green, blue values separately in an
+  // array
+  private static int[] getRGB(BufferedImage Img, int x, int y) {
+    int rgb = Img.getRGB(x,y);
+    int[] A = new int[3];
+    A[0] = (rgb >> 16) & 0xFF;
+    A[1] = (rgb >> 8) & 0xFF;
+    A[2] = rgb & 0xFF;
+    return A;
+  }
+  
   // detect Tetromino using pixels in rect from screen
   public static int detectTetrominoSimple() {
     BufferedImage Img = robot.createScreenCapture(TetrisRect);
     for (int x = 0; x < TetrisRect.width; x++) {
       for (int y = 0; y <  TetrisRect.height; y++) {
-        int rgb = Img.getRGB(x,y);
-        int[] A = new int[3];
-        A[0] = (rgb >> 16) & 0xFF;
-        A[1] = (rgb >> 8) & 0xFF;
-        A[2] = rgb & 0xFF;
-        //		System.out.println(A[0]+" "+A[1]+" "+A[2]);
-
-        int ret = matchTetromino(A);
+        int ret = matchTetromino(getRGB(Img, x, y));
         if (ret != -1) return ret;
       }
     }
@@ -120,26 +123,51 @@ public class TetrisWebsiteInteraction {
   }
 
   // detect current Tetris board configuration
+  // the different types of the Tetrominos are marked with
+  // integers i = 10 through 16, i representing Tetromino type i - 10
   public static TetrisBoard detectTetrisBoard() {
-    TetrisBoard detectBoard = new TetrisBoard();
+    int[][] A = new int[TetrisBoard.BOARDH][TetrisBoard.BOARDH];
+
     BufferedImage Img = robot.createScreenCapture(TetrisRect);
     int hstep = TetrisRect.width  / TetrisBoard.BOARDW;
     int vstep = TetrisRect.height / TetrisBoard.BOARDH;
     int hmargin = Math.max(hstep / 14, 1);
     int vmargin = Math.max(vstep / 14, 1);
 
+    System.out.println(TetrisRect.toString());
+    System.out.println("hstep " + hstep + " vstep " + vstep + " hmargin " + hmargin + " vmargin " + vmargin);
+    System.out.println("WIDTH " + Img.getWidth() + " HEIGHT " + Img.getHeight());
+    
     for (int j = 0; j < TetrisBoard.BOARDH; j++) {
       for (int i = 0; i < TetrisBoard.BOARDW; i++) {
+        int ret = -1;
         for (int y = vmargin + j * vstep; y < (j+1) * vstep - vmargin; y++) {
           for (int x = hmargin + i * hstep; x < (i+1) * hstep - hmargin; x++) {
-       
+            ret = matchTetromino(getRGB(Img, x, y));
+            System.out.println("("+x+","+y+") ("+i+","+j+")");
+            if (ret != -1) {
+              // found Tetromino, break condition for loops
+              System.out.println("F  x "+x+" y "+y+" i "+i+" j "+j);
+              x = TetrisRect.width;
+              y = TetrisRect.height;
+            }
           }
         }
+        A[j][i] = (ret == -1) ? 0 : ret + 10;
       }
     }
-    return detectBoard;
+    // DEBUG
+    for (int j = 0; j < TetrisBoard.BOARDH; j++) {
+      for (int i = 0; i < TetrisBoard.BOARDW; i++) {
+        System.out.print(A[j][i] + " ");
+      }
+      System.out.println("");
+    }
+    System.out.println("");
+    
+    return new TetrisBoard(A);
   }
-  
+  // /DEBUG
   public enum MoveType { 
     UP, DOWN, LEFT, RIGHT, SHIFT, SPACE, CLICK, CTRL
         }
@@ -269,6 +297,9 @@ public class TetrisWebsiteInteraction {
       currBoard.dropTetromino(type, move.rot, move.pos, currBoard.tilemarker++);
       currBoard.clearLinesUpdateHeight();
       currBoard.printFullBoard();
+      // for testing:
+      detectTetrisBoard().printFullBoard();
+      
       System.out.println("SCORE: " + currBoard.score);
     }
 
