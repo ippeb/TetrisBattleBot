@@ -230,8 +230,11 @@ public class TetrisWebsiteInteraction {
   }
 
     
-  public static void doMove(TetrisMove move, int type) {	
-    if (move.rot <= 2) {
+  public static void doMove(TetrisMove move, int type) {
+    // replace 3 with 2 if CTRL button can be pressed
+    // currently it's not working
+    // -> deactivated left rotation (CTRL key press)
+    if (move.rot <= 3) {
       for (int i = 0; i < move.rot; i++) {
         pressKey(MoveType.UP);
       }
