@@ -13,9 +13,7 @@ This bot simulates a human playing "Tetris Battle" on a web browser.
 The goal of this Tetris game is to maximize the number of subsequently filled
 lines.
 
-
-Note: This game was only tested on [http://www.tetrisfriends.com/](http://www.tetrisfriends.com/); Also, 
-the keyboard settings need to be switched to US - Dvorak International.
+Note: This game was only tested on [http://www.tetrisfriends.com/](http://www.tetrisfriends.com/).
 
 
 How to use
@@ -67,7 +65,7 @@ should be OS independent.
 After every simulated key press (rotation, horizontal or vertical
 movement of the Tetromino) the bot analyzes the current Tetris board
 and checks whether the key press was actually executed in the
-Flash game. If not, the key press will then be repeated. If a
-different Tetris board configuration was detected (maybe the user has typed
-a key by mistake) the program adapts to the new Tetris board
-configuration.
+Flash game. If not, the key press will then be repeated and the "key press delay"
+will be increased. If a different Tetris board configuration was detected
+(maybe the user has typed a key by mistake) the program adapts dynamically
+to the new Tetris board configuration.

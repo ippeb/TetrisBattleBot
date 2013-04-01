@@ -22,14 +22,16 @@ public class TetrisWebsiteInteraction {
 
   // delay after pressing space if it will 
   // lead to a filled line
-  public static final int FILLLINEDELAY = 300;
+  public static int FILL_LINE_DELAY = 200;
   // key press delay for other movements
-  public static final int KEYDELAY   = 30;
+  public static int KEY_DELAY   = 30;
+  // delay between key press and key release
+  public static final int KEY_PRESS_KEY_RELEASE_DELAY   = 20;
   // number of milliseconds this robot sleeps
   // after generating an event
-  public static final int AUTODELAY  = 50;
+  public static final int AUTO_DELAY  = 50;
   // random delay range
-  public static final int RANDDELAYRANGE = 20;
+  public static final int RAND_DELAY_RANGE = 20;
 
   
   // Types of Tetrominoes
@@ -65,9 +67,9 @@ public class TetrisWebsiteInteraction {
 
 
 
-  // delay by d + rand(0...RANDDELAYRANGE) milliseconds
+  // delay by d + rand(0...RAND_DELAY_RANGE) milliseconds
   public static void delay(int d) {
-    robot.delay((int) (Math.random() * RANDDELAYRANGE) + d);
+    robot.delay((int) (Math.random() * RAND_DELAY_RANGE) + d);
   }
   
 
@@ -183,9 +185,10 @@ public class TetrisWebsiteInteraction {
     
 
   // simulate a key press in detail - used in pressKey(..)
-  private static void type(int key) {
-    delay(KEYDELAY);
+  private synchronized static void type(int key) {
+    delay(KEY_DELAY);
     robot.keyPress(key);
+    delay(KEY_PRESS_KEY_RELEASE_DELAY);
     robot.keyRelease(key);
   }
 
@@ -207,8 +210,7 @@ public class TetrisWebsiteInteraction {
           break;
         case SPACE: type(KeyEvent.VK_SPACE);
           break;
-        case CTRL:                 // type(KeyEvent.VK_CONTROL); // control key not working
-          type(KeyEvent.VK_SLASH); // corresponds to 'z' (for Dvorak keyboard layout only)
+        case CTRL:  type(KeyEvent.VK_CONTROL);
           break;
         case CLICK: // left click
           robot.mousePress(InputEvent.BUTTON1_MASK);
@@ -254,7 +256,7 @@ public class TetrisWebsiteInteraction {
     }
 
     pressKey(MoveType.SPACE);
-    robot.delay(FILLLINEDELAY);  // extra delay after pressing "SPACE"
+    robot.delay(FILL_LINE_DELAY);  // extra delay after pressing "SPACE"
   }
 
 
@@ -268,7 +270,7 @@ public class TetrisWebsiteInteraction {
     }
     // sets the number of milliseconds this robot sleeps after
     // generating an event.
-    robot.setAutoDelay(AUTODELAY);
+    robot.setAutoDelay(AUTO_DELAY);
     // sets whether this robot automatically invokes waitForIdle 
     // after generating an event.
     robot.setAutoWaitForIdle(true);
@@ -277,6 +279,7 @@ public class TetrisWebsiteInteraction {
 
   
   public static void main(String[] args) throws AWTException {
+        
     // initialize robot
     initRobot();
 
@@ -309,8 +312,19 @@ public class TetrisWebsiteInteraction {
       int diff = currBoard.verifyCorrect(detectTetrisBoard(OTHERRGB, currBoard));
       
       currBoard.printFullBoard();   // only debug
-      if (diff > 0)                 // only debug
+      if (diff > 0) {
         System.out.println("large Feedback loop: ERROR occured - diff = " + diff); // only debug
+
+        // adaptive delay controller
+        /*
+        if (diff > 5) 
+          FILL_LINE_DELAY += (int)  ((double) FILL_LINE_DELAY * 0.1);
+        else
+          KEY_DELAY += (int)  ((double) KEY_DELAY * 0.1);
+        System.out.println("Current delays: " + FILL_LINE_DELAY + " and " + KEY_DELAY);
+        */
+      }
+      
     }
   }
 }
