@@ -22,14 +22,14 @@ public class TetrisWebsiteInteraction {
 
   // delay after pressing space if it will 
   // lead to a filled line
-  public static int FILL_LINE_DELAY = 200;
+  public static int FILL_LINE_DELAY = 50;
   // key press delay for other movements
-  public static int KEY_DELAY   = 30;
+  public static int KEY_DELAY   = 10;
   // delay between key press and key release
   public static final int KEY_PRESS_KEY_RELEASE_DELAY   = 20;
   // number of milliseconds this robot sleeps
   // after generating an event
-  public static final int AUTO_DELAY  = 50;
+  public static final int AUTO_DELAY  = 30;
   // random delay range
   public static final int RAND_DELAY_RANGE = 20;
 
@@ -231,6 +231,8 @@ public class TetrisWebsiteInteraction {
 
     
   public static void doMove(TetrisMove move, int type) {
+
+
     // replace 3 with 2 if CTRL button can be pressed
     // currently it's not working
     // -> deactivated left rotation (CTRL key press)
@@ -259,9 +261,8 @@ public class TetrisWebsiteInteraction {
     }
 
     pressKey(MoveType.SPACE);
-    robot.delay(FILL_LINE_DELAY);  // extra delay after pressing "SPACE"
+    robot.delay(FILL_LINE_DELAY);  // extra delay after pressing "SPACE", at the beginning
   }
-
 
   // initialize robot
   public static void initRobot() {

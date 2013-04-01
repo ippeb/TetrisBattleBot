@@ -13,7 +13,7 @@ public class TetrisSimulation {
     Robot robot = new Robot();
 	
     TB.printFullBoard();
-    for (int t = 1; t <= 300; t++) {
+    for (int t = 1; t <= 500; t++) {
       int randomType = TetrisRandom.type();
       TetrisMove Move = TS.computeBestMove(TB, randomType);
 	    
@@ -30,7 +30,7 @@ public class TetrisSimulation {
       System.out.println("ROUND " + t);
       System.out.println("SCORE: " + TB.score);       
       System.out.println();
-      robot.delay(10);
+      robot.delay(2);
     }
 
     //	System.out.println("Total Score: " + TB.score);

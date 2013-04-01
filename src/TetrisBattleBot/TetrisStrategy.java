@@ -9,15 +9,17 @@
 // * Holes that are vertically aligned with other holes are not quite as bad
 // * Tall 1-wide troughs are bad
 // * 1-wide troughs are not so bad if they are only 1 or 2 deep. 
-//   Think about which pieces could fill a 2-deep trough -- 1, 2, or 3 out of the 
-//   7 pieces depending on the two sides of the trough. Concentrate on issues that 
-//   are near the current top of the pile. Holes that 10 levels below the top edge 
-//   are not as important as holes that are immediately below the top edge.
+//   Think about which pieces could fill a 2-deep trough -- 1, 2, or 3 out
+//   of the  7 pieces depending on the two sides of the trough.
+//   Concentrate on issues that are near the current top of the pile.
+//   Holes that 10 levels below the top edge are not as important as holes
+//   that are immediately below the top edge.
 
 package TetrisBattleBot;
 
 public class TetrisStrategy {
-  // returns the cost of placing the Tetromino type i, rotated by j*90 degrees at position x=k 
+  // returns the cost of placing the Tetromino type i,
+  // rotated by j*90 degrees at position x=k 
   public static int costFunction(TetrisBoard TB, int i, int j, int k, boolean DEBUG) {
     if (DEBUG) {
       System.out.println("cost fn ("+i+", "+j+", "+k+")");
@@ -31,7 +33,8 @@ public class TetrisStrategy {
       int hole       = TB.hole();       // number of holes
       // maximal height (value from 0 to BOARDH (exclusive), as seen from the bottom)
       int maxHeight  = TetrisBoard.BOARDH - (TB.maxHeight() - TetrisBoard.TMARGIN) - 1;
-      int currHeight = TetrisBoard.BOARDH - (TB.getHeight(k) - TetrisBoard.TMARGIN) - 1; // height at pos k
+      // height at pos k
+      int currHeight = TetrisBoard.BOARDH - (TB.getHeight(k) - TetrisBoard.TMARGIN) - 1; 
       // count for all rows (from left to right) in TetrisBoard.Board
       // number of changes from value 0 (empty) to a positive value (filled)
       int horizontalDiff = TB.horizontalDiff(); 
