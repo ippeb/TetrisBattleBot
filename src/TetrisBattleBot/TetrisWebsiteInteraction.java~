@@ -286,6 +286,11 @@ public class TetrisWebsiteInteraction {
 
     // initialize robot
     initRobot();
+
+    boolean yes = true;
+    while (yes){ 
+      pressKey(MoveType.SHIFT);
+    }
     
     // initialize the Tetris board
     TetrisBoard currBoard = new TetrisBoard();
